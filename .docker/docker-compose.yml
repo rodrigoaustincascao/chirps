@@ -1,0 +1,77 @@
+version: "3"
+
+volumes:
+    chirps-postgres-volume:
+    chirps-postgres-teste-volume:
+    chirps-redis-volume:
+
+
+networks:
+    laranet_chirps:
+        driver: bridge
+
+services:
+    ######## APP ########
+    chirps:
+        build:
+            context: ..
+            dockerfile: .docker/Dockerfile
+        command: "/usr/local/bin/start"
+        working_dir: /var/www/app
+        volumes:
+            - ../:/var/www/app:cached
+        ports:
+            - 8081:8080
+        depends_on:
+            - chirps-postgres
+            - chirps-postgres-teste
+            - chirps-redis
+        networks:
+            - laranet_chirps
+
+    ######## REDIS ########
+    chirps-redis:
+        image: redis:7.0.5
+        volumes:
+            - chirps-redis-volume:/data
+        ports:
+            - 6380:6379
+        networks:
+            - laranet_chirps
+
+    ######## POSTGRES ########
+    chirps-postgres:
+        image: postgres:14.6
+        environment:
+            - POSTGRES_DB=chirps-db
+            - POSTGRES_USER=chirps
+            - POSTGRES_PASSWORD=chirps
+        volumes:
+            - chirps-postgres-volume:/var/lib/postgresql/data
+        ports:
+            - 5433:5432
+        networks:
+            - laranet_chirps
+
+    ######## POSTGRES (TESTE AUTOMATIZADO) ########
+    chirps-postgres-teste:
+        image: postgres:14.6
+        environment:
+            - POSTGRES_DB=chirps-db
+            - POSTGRES_USER=chirps
+            - POSTGRES_PASSWORD=chirps
+        volumes:
+            - chirps-postgres-teste-volume:/var/lib/postgresql/data
+        ports:
+            - 54178:5432
+        networks:
+            - laranet_chirps
+
+    ######## MAILHOG (CAIXA DE EMAIL FAKE) ########
+    chirps-mail:
+        image: mailhog/mailhog:v1.0.1
+        ports:
+            - 1025:1025
+            - 8025:8025
+        networks:
+            - laranet_chirps
