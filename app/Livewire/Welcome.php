@@ -10,7 +10,7 @@ class Welcome extends Component
     {
         return <<<'HTML'
         <div>
-            Hello :) {{auth()->user()}}
+            Hello :)
         </div>
         HTML;
     }

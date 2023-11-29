@@ -23,7 +23,7 @@ new class extends Component {
             request()
                 ->session()
                 ->regenerate();
-            return redirect()->intended('/');
+            return redirect()->intended('/chirps');
         }
 
         $this->reset();
@@ -39,7 +39,9 @@ new class extends Component {
             <x-input label="Password" wire:model="password" type="password" icon="o-key" inline />
 
             <x-slot:actions>
+                <x-button label="Cadastrar" link="/cadastro" icon="o-user" />
                 <x-button label="Login" type="submit" icon="o-paper-airplane" class="btn-primary" spinner="login" />
+
             </x-slot:actions>
         </x-form>
     </x-card>

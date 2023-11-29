@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChirpController;
 use App\Livewire\Welcome;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -32,6 +33,7 @@ Route::get('/logout', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/', Welcome::class);
+    Route::get('/chirps', [ChirpController::class, 'index']);
     Volt::route('/email/verify', 'auth/verify-email')->name('verification.notice');
 });
 

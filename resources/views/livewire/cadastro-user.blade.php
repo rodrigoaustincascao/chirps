@@ -24,20 +24,19 @@ new class extends Component {
     public function create()
     {
         $dados = $this->validate();
-        try {
-            $user = User::create([
-                'name' => $dados['name'],
-                'password' => Hash::make($dados['password']),
-                'email' => $dados['email'],
-            ]);
 
-            event(new Registered($user));
+        $user = User::create([
+            'name' => $dados['name'],
+            'password' => Hash::make($dados['password']),
+            'email' => $dados['email'],
+        ]);
 
-            $this->reset();
-            $this->success(title: 'Sucesso', description: 'Cadastro criado com sucesso!', redirectTo: '/cadastro');
-        } catch (Throwable $erro) {
-            $this->error(title: 'Erro', description: $erro->getMessage(), redirectTo: '/cadastro');
-        }
+        event(new Registered($user));
+
+        Auth::login(User::where('email', $dados['email'])->first());
+
+        $this->reset();
+        $this->success(title: 'Sucesso', description: 'Cadastro criado com sucesso!', redirectTo: '/chirps');
     }
 }; ?>
 
