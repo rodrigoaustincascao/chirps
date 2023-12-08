@@ -19,6 +19,7 @@ new class extends Component {
             'chirps' => $this->getChirps(),
         ];
     }
+
     public function getChirps(): Collection
     {
         return Chirp::with('user')
@@ -67,9 +68,19 @@ new class extends Component {
                 <x-slot:menu>
 
                     <x-button wire:click="edit({{ $chirp->id }})" icon="o-pencil-square" class="btn-circle btn-sm" />
-                    <x-button wire:click="delete({{ $chirp->id }})" wire:confirm="Are you sure to delete this chirp?"
-                        icon="o-trash" class="cursor-pointer btn-circle btn-sm" />
+                    <x-button onclick="modal{{ $chirp->id }}.showModal()" icon="o-trash"
+                        class="cursor-pointer btn-circle btn-sm" />
+
                 </x-slot:menu>
+                <x-modal id="modal{{ $chirp->id }}" title="Are you sure?" persistent>
+                    Are you sure you want to delete?
+
+                    <x-slot:actions>
+                        {{-- Note `onclick` is HTML --}}
+                        <x-button label="Cancel" onclick="modal{{ $chirp->id }}.close()" />
+                        <x-button label="Confirm" wire:click="delete({{ $chirp->id }})" class="btn-primary" />
+                    </x-slot:actions>
+                </x-modal>
             @endif
         </x-card>
     @endforeach
